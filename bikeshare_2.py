@@ -1,3 +1,4 @@
+from calendar import FRIDAY, MONDAY, SATURDAY, SUNDAY, THURSDAY, TUESDAY, WEDNESDAY
 import time
 import pandas as pd
 import numpy as np
@@ -102,74 +103,103 @@ def load_data(city, month, day):
     return df
 
 
-def time_stats(df):
+def time_stats(df:pd.DataFrame):
     """Displays statistics on the most frequent times of travel."""
 
     print('\nCalculating The Most Frequent Times of Travel...\n')
     start_time = time.time()
 
-    # display the most common month
+    # TO DO: display the most common month
+    commonMonth = df["Month"].value_counts().keys()[0] - 1
+    month = list(MONTHS.keys())[commonMonth]
+    print(f"the most common month:          {month}")
+    # TO DO: display the most common day of week
+    commonWeekday = df["Weekday"].value_counts().keys()[0]  
+    weekday = list(WEEK_DAYS.keys())[commonWeekday]
+    print(f"the most common day of week:    {weekday}")
 
-
-    # display the most common day of week
-
-
-    # display the most common start hour
-
+    # TO DO: display the most common start hour
+    commonStartHour = df["Hour"].value_counts()
+    startHour = commonStartHour.keys()[0]
+    print(f"the most common start hour:     {startHour}")
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
 
-def station_stats(df):
+def station_stats(df:pd.DataFrame):
     """Displays statistics on the most popular stations and trip."""
 
     print('\nCalculating The Most Popular Stations and Trip...\n')
     start_time = time.time()
 
-    # display most commonly used start station
+    df["Start End Station"] = df[['Start Station', 'End Station']].agg(' - '.join, axis=1)
 
+    # TO DO: display most commonly used start station
+    startStation = df["Start Station"].value_counts().keys()[0]
+    print(f"most commonly used start station:                                   {startStation}")
 
-    # display most commonly used end station
+    # TO DO: display most commonly used end station
+    endStation = df["End Station"].value_counts().keys()[0]
+    print(f"most commonly used end station:                                     {endStation}")
 
-
-    # display most frequent combination of start station and end station trip
-
+    # TO DO: display most frequent combination of start station and end station trip
+    startEndStation = df["Start End Station"].value_counts().keys()[0]
+    print(f"most frequent combination of start station and end station trip:    {startEndStation}")
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
 
-def trip_duration_stats(df):
+def trip_duration_stats(df:pd.DataFrame):
     """Displays statistics on the total and average trip duration."""
 
     print('\nCalculating Trip Duration...\n')
     start_time = time.time()
 
-    # display total travel time
+    # TO DO: display total travel time
+    total = df["Trip Duration"].sum()
+    print(f"total travel time:  {total}s")
 
-
-    # display mean travel time
-
+    # TO DO: display mean travel time
+    avg = df["Trip Duration"].mean()
+    print(f"mean travel time:   {avg}s")
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
 
-def user_stats(df):
+def user_stats(df:pd.DataFrame):
     """Displays statistics on bikeshare users."""
 
     print('\nCalculating User Stats...\n')
     start_time = time.time()
 
-    # Display counts of user types
+    # TO DO: Display counts of user types
+    countUserType = pd.DataFrame(df["User Type"].value_counts())
+    countUserType.columns = ["Count"]
+    print(f"\ncounts of user types: \n{countUserType}")
 
+    # TO DO: Display counts of gender
+    if "Gender" in df.keys():
+        countGender = pd.DataFrame(df["Gender"].value_counts())
+        countGender.columns = ["Count"]
+        print(f"\ncounts of gender: \n{countGender}")
+    else:
+        print('\nGender stats cannot be calculated because Gender does not appear in the dataframe')
 
-    # Display counts of gender
-
-
-    # Display earliest, most recent, and most common year of birth
-
+    # TO DO: Display earliest, most recent, and most common year of birth
+    if 'Birth Year' in df.keys():
+        birthYear = df['Birth Year'].value_counts().keys()
+        earliest = min(birthYear)
+        mostRecent = max(birthYear)
+        common = birthYear[0]
+        print()
+        print(f"earliest:                   {earliest}")
+        print(f"emost recent:               {mostRecent}")
+        print(f"most common year of birth:  {common}")
+    else:
+        print('\nBirth Year stats cannot be calculated because Birth Year does not appear in the dataframe')
 
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
