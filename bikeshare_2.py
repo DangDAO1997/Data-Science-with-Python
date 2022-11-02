@@ -50,17 +50,30 @@ def get_filters():
         (str) day - name of the day of week to filter by, or "all" to apply no day filter
     """
     print('Hello! Let\'s explore some US bikeshare data!')
-    # get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
+    # TO DO: get user input for city (chicago, new york city, washington). HINT: Use a while loop to handle invalid inputs
+    while True:
+        city = input('\nInput city name:\n').lower()
+        csvFile = CITY_DATA.get(city)
+        if csvFile:
+            break
+        print("city not found")
 
-
-    # get user input for month (all, january, february, ... , june)
-
-
-    # get user input for day of week (all, monday, tuesday, ... sunday)
-
-
+    # TO DO: get user input for month (all, january, february, ... , june)
+    while True:
+        monthInput = input('\nInput month:\n').lower()
+        month = MONTHS.get(monthInput)
+        if month:
+            break
+        print("month not found")
+    # TO DO: get user input for day of week (all, monday, tuesday, ... sunday)
+    while True:
+        weekdayInput = input('\nInput weekday:\n').lower()
+        weekday = WEEK_DAYS.get(weekdayInput)
+        if weekday!= None:
+            break
+        print("weekday not found")
     print('-'*40)
-    return city, month, day
+    return city, month, weekday
 
 
 def load_data(city, month, day):
@@ -74,8 +87,18 @@ def load_data(city, month, day):
     Returns:
         df - Pandas DataFrame containing city data filtered by month and day
     """
-
-
+    csvFile = CITY_DATA[city]
+    df = pd.read_csv(csvFile)
+    df["Start Time"] = pd.to_datetime(df["Start Time"], format=f'%m/%d/%Y %H:%M')
+    df["End Time"] = pd.to_datetime(df["End Time"], format=f'%m/%d/%Y %H:%M')
+    df["Month"] = df["Start Time"].dt.month
+    df["Weekday"] = df["Start Time"].dt.weekday
+    df["Hour"] = df["Start Time"].dt.hour
+    if month != -1:
+        df = df[df["Start Time"].dt.month == month]
+    if day != -1:
+        df = df[df["Start Time"].dt.weekday == day]
+    show_raw_data(df)
     return df
 
 
@@ -169,5 +192,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
-# First change in bikeshare.py
